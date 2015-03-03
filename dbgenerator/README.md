@@ -18,4 +18,6 @@ This file parse the xml file, and generate the table create statement.
 I comment some statements, open them can generate table on database.
 
 The output result is like below:
+```
 2015/03/03 10:51:56 Execute sql:CREATE TABLE Persons (PersonID INT NOT NULL COMMENT 'Column comment', LastName VARCHAR(255) NOT NULL, FirstName VARCHAR(255) NOT NULL, Address VARCHAR(255), City VARCHAR(255), PRIMARY KEY (PersonID))
+```
