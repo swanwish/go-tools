@@ -4,19 +4,33 @@ import (
 	// "database/sql"
 	"encoding/xml"
 	"errors"
+	"flag"
+	// "fmt"
 	// _ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
 	"os"
 )
 
-const (
-	schemaFilePath = "schema.xml"
-	driver         = "mysql"
-	dataSourceName = "username:password@tcp(host:3306)/dbname"
+var (
+	schemaFilePath string
+	driver         string
+	dbUser         string
+	dbPwd          string
+	dbHost         string
+	dbPort         int
 	indent         = "    "
 	drop           = true
 )
+
+func init() {
+	flag.StringVar(&schemaFilePath, "schema", "schema.xml", "The schema xml file path")
+	flag.StringVar(&driver, "driver", "mysql", "The driver of the database")
+	flag.StringVar(&dbUser, "user", "", "Database user name")
+	flag.StringVar(&dbPwd, "pwd", "", "The password of the database user")
+	flag.StringVar(&dbHost, "host", "127.0.0.1", "The database host name")
+	flag.IntVar(&dbPort, "port", 3306, "The port for the database")
+}
 
 type Column struct {
 	Name        string `xml:"name,attr"`
@@ -118,6 +132,7 @@ func (column Column) GetDefineSQL() (string, error) {
 }
 
 func main() {
+	flag.Parse()
 	xmlFile, err := os.Open(schemaFilePath)
 	if err != nil {
 		log.Println("Open file failed.", err)
@@ -130,17 +145,25 @@ func main() {
 		log.Println("Read file failed.", err)
 	}
 
-	var schema = Db{}
-	xml.Unmarshal(b, &schema)
+	var dbSchema = Db{}
+	xml.Unmarshal(b, &dbSchema)
 
-	// db, err := sql.Open(driver, dataSourceName)
+	// if dbSchema.Name == "" {
+	// 	log.Println("The db name is not specified.")
+	// 	return
+	// }
+
+	// dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", dbUser, dbPwd, dbHost, dbPort, dbSchema.Name)
+	// log.Println("The data source name is", dsn)
+	// //	return
+	// db, err := sql.Open(driver, dsn)
 	// if err != nil {
 	// 	log.Println("Connect database failed.")
 	// 	return
 	// }
 	// defer db.Close()
 
-	for _, table := range schema.Tables {
+	for _, table := range dbSchema.Tables {
 		if drop {
 			sql, err := table.GetDropSQL()
 			if err != nil {

@@ -14,8 +14,17 @@ This is the xml file define the db schema.
 * Column - Define the table column, include column name, type, length primary key, and not null property.
 
 ## generator.go
+*This file can populate tables on MySQL*
 This file parse the xml file, and generate the table create statement.
 I comment some statements, open them can generate table on database.
+
+** Parameters **
+* schema - The schema define file path
+* driver - The database driver, default is mysql
+* user - The database user name to connect database
+* pwd - The password of the user to connect database
+* host - The database host
+* port - The database port
 
 **The output result is like below:**
 ```
