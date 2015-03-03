@@ -19,5 +19,15 @@ I comment some statements, open them can generate table on database.
 
 The output result is like below:
 ```
-2015/03/03 10:51:56 Execute sql:CREATE TABLE Persons (PersonID INT NOT NULL COMMENT 'Column comment', LastName VARCHAR(255) NOT NULL, FirstName VARCHAR(255) NOT NULL, Address VARCHAR(255), City VARCHAR(255), PRIMARY KEY (PersonID))
+2015/03/03 11:47:47 Execute sql:
+DROP TABLE IF EXISTS Persons
+2015/03/03 11:47:47 Execute sql:
+CREATE TABLE Persons (
+    PersonID INT NOT NULL COMMENT 'Column comment',
+    LastName VARCHAR(255) NOT NULL,
+    FirstName VARCHAR(255) NOT NULL,
+    Address VARCHAR(255),
+    City VARCHAR(255),
+    PRIMARY KEY (PersonID)
+) COMMENT='Test table'
 ```
