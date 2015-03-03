@@ -9,7 +9,7 @@ This is also an example about how to parse xml with golang.
 ## schema.xml
 This is the xml file define the db schema.
 
-### xml fields
+xml fields
 Table - Define the tables in the database.
 Column - Define the table column, include column name, type, length primary key, and not null property.
 

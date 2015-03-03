@@ -14,6 +14,8 @@ const (
 	schemaFilePath = "schema.xml"
 	driver         = "mysql"
 	dataSourceName = "username:password@tcp(host:3306)/dbname"
+	indent         = "    "
+	drop           = true
 )
 
 type Column struct {
@@ -36,6 +38,14 @@ type Db struct {
 	Tables []Table `xml:"table"`
 }
 
+func (table Table) GetDropSQL() (string, error) {
+	if table.Name == "" {
+		log.Println("Table name not specified.")
+		return "", errors.New("Table name not specified.")
+	}
+	return "DROP TABLE IF EXISTS " + table.Name, nil
+}
+
 func (table Table) GetCreateSQL() (string, error) {
 	if table.Name == "" {
 		log.Println("Table name not specified.")
@@ -46,7 +56,7 @@ func (table Table) GetCreateSQL() (string, error) {
 		log.Println("No column defined for table ", table.Name)
 		return "", errors.New("No column defined for table " + table.Name)
 	}
-	sql := "CREATE TABLE " + table.Name + " ("
+	sql := "CREATE TABLE " + table.Name + " (\n"
 
 	pks := ""
 	pkCount := 0
@@ -57,9 +67,9 @@ func (table Table) GetCreateSQL() (string, error) {
 			return "", err
 		}
 		if index > 0 {
-			sql += ", "
+			sql += ",\n"
 		}
-		sql += defineSql
+		sql += indent + defineSql
 		if column.PK == 1 {
 			if pkCount > 0 {
 				pks += ", "
@@ -69,9 +79,13 @@ func (table Table) GetCreateSQL() (string, error) {
 		}
 	}
 	if pkCount > 0 {
-		sql += ", PRIMARY KEY (" + pks + ")"
+		sql += ",\n" + indent + "PRIMARY KEY (" + pks + ")"
 	}
-	sql += ")"
+	sql += "\n)"
+
+	if table.Description != "" {
+		sql += " COMMENT='" + table.Description + "'"
+	}
 
 	return sql, nil
 }
@@ -104,7 +118,7 @@ func (column Column) GetDefineSQL() (string, error) {
 }
 
 func main() {
-	xmlFile, err := os.Open("schema.xml")
+	xmlFile, err := os.Open(schemaFilePath)
 	if err != nil {
 		log.Println("Open file failed.", err)
 		return
@@ -127,12 +141,25 @@ func main() {
 	// defer db.Close()
 
 	for _, table := range schema.Tables {
+		if drop {
+			sql, err := table.GetDropSQL()
+			if err != nil {
+				log.Println("Failed to generate drop sql.", err)
+				continue
+			}
+			log.Println("Execute sql:\n" + sql)
+			// _, err = db.Exec(sql)
+			// if err != nil {
+			// 	log.Println("Drop table failed.", err)
+			// 	log.Println("We will try to create table.")
+			// }
+		}
 		sql, err := table.GetCreateSQL()
 		if err != nil {
 			log.Println("Generate create sql failed.", err)
 			continue
 		}
-		log.Println("Execute sql:" + sql)
+		log.Println("Execute sql:\n" + sql)
 		// _, err = db.Exec(sql)
 		// if err != nil {
 		// 	log.Println("Execute sql "+sql+" Failed", err)
