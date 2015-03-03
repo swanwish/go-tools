@@ -9,7 +9,7 @@ This is also an example about how to parse xml with golang.
 ## schema.xml
 This is the xml file define the db schema.
 
-*xml fields*
+**xml fields**
 * Table - Define the tables in the database.
 * Column - Define the table column, include column name, type, length primary key, and not null property.
 
@@ -17,7 +17,7 @@ This is the xml file define the db schema.
 This file parse the xml file, and generate the table create statement.
 I comment some statements, open them can generate table on database.
 
-*The output result is like below:*
+**The output result is like below:**
 ```
 2015/03/03 11:47:47 Execute sql:
 DROP TABLE IF EXISTS Persons
