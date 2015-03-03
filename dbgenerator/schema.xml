@@ -1,0 +1,9 @@
+<db name="TestDB">
+	<table name="Persons" description="Test table">
+		<column name="PersonID" type="INT" pk="1" description="Column comment"/>
+		<column name="LastName" type="VARCHAR" length="255" notnull="1" />
+		<column name="FirstName" type="VARCHAR" length="255" notnull="1"/>
+		<column name="Address" type="VARCHAR" length="255" />
+		<column name="City" type="VARCHAR" length="255" />
+	</table>
+</db>
