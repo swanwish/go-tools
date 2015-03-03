@@ -18,7 +18,7 @@ This is the xml file define the db schema.
 This file parse the xml file, and generate the table create statement.
 I comment some statements, open them can generate table on database.
 
-** Parameters **
+**Parameters**
 * schema - The schema define file path
 * driver - The database driver, default is mysql
 * user - The database user name to connect database
