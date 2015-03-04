@@ -155,7 +155,7 @@ func main() {
 
 	// dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", dbUser, dbPwd, dbHost, dbPort, dbSchema.Name)
 	// log.Println("The data source name is", dsn)
-	// //	return
+
 	// db, err := sql.Open(driver, dsn)
 	// if err != nil {
 	// 	log.Println("Connect database failed.")
