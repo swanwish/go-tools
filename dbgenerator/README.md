@@ -44,6 +44,6 @@ CREATE TABLE Persons (
 ## tools.go
 **The helper file to generate sql, devsql**
 **Parameters**
-*op - The operation to be execute, current operations: show, devsql, populate
-	*show - Show drop and create sql
-	*devsql - Show insert and update sql
+* op - The operation to be execute, current operations: show, devsql, populate
+	* show - Show drop and create sql
+	* devsql - Show insert and update sql
