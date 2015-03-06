@@ -47,3 +47,15 @@ CREATE TABLE Persons (
 * op - The operation to be execute, current operations: show, devsql, populate
 	* show - Show drop and create sql
 	* devsql - Show insert and update sql
+	* gostruct
+
+**The help for the tools.go**
+```
+  -driver="mysql": The driver of the database
+  -host="127.0.0.1": The database host name
+  -op="show": The operation to do, can be: show, populate, devsql, gostruct
+  -port=3306: The port for the database
+  -pwd="": The password of the database user
+  -schema="schema.xml": The schema xml file path
+  -user="": Database user name
+```
