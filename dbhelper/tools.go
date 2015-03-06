@@ -2,10 +2,10 @@ package main
 
 import (
 	"./models"
-	// "database/sql"
+	"database/sql"
 	"flag"
 	"fmt"
-	// _ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 )
 
@@ -27,7 +27,7 @@ func init() {
 	flag.StringVar(&dbPwd, "pwd", "", "The password of the database user")
 	flag.StringVar(&dbHost, "host", "127.0.0.1", "The database host name")
 	flag.IntVar(&dbPort, "port", 3306, "The port for the database")
-	flag.StringVar(&operation, "op", "show", "Whether populate database or not")
+	flag.StringVar(&operation, "op", "show", "The operation to do, can be: show, populate, devsql, gostruct")
 	flag.Parse()
 }
 
@@ -44,6 +44,8 @@ func main() {
 		ShowTableInfo(dbSchema)
 	case "devsql":
 		ShowDevSql(dbSchema)
+	case "gostruct":
+		ShowGoStruct(dbSchema)
 	default:
 		log.Println("Unknown operation:", operation)
 	}
@@ -59,14 +61,29 @@ func ShowDevSql(dbSchema models.DBSchema) {
 		if err != nil {
 			log.Println("Failed to get select sql.", err)
 		} else {
-			fmt.Printf("Select SQL:\x1b[31;1m%s\x1b[0m\n", sql)
+			fmt.Printf("Select SQL:\n\x1b[31;1m%s\x1b[0m\n", sql)
 		}
 
 		sql, err = table.GetUpdateSQL()
 		if err != nil {
 			log.Println("Failed to get update sql.", err)
 		} else {
-			fmt.Printf("Update SQL:\x1b[31;1m%s\x1b[0m\n", sql)
+			fmt.Printf("Update SQL:\n\x1b[31;1m%s\x1b[0m\n", sql)
+		}
+	}
+}
+
+func ShowGoStruct(dbSchema models.DBSchema) {
+	for index, table := range dbSchema.Tables {
+		if index > 0 {
+			fmt.Println()
+		}
+		fmt.Println("// model for table " + table.Name)
+		result, err := table.GetGoStruct()
+		if err != nil {
+			log.Println("Failed to get go struct.", err)
+		} else {
+			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", result)
 		}
 	}
 }
@@ -98,37 +115,37 @@ func PopulateTables(dbSchema models.DBSchema) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", dbUser, dbPwd, dbHost, dbPort, dbSchema.Name)
 	log.Println("The data source name is", dsn)
 
-	// db, err := sql.Open(driver, dsn)
-	// if err != nil {
-	// 	log.Println("Connect database failed.")
-	// 	return
-	// }
-	// defer db.Close()
+	db, err := sql.Open(driver, dsn)
+	if err != nil {
+		log.Println("Connect database failed.")
+		return
+	}
+	defer db.Close()
 
-	// for _, table := range dbSchema.Tables {
-	// 	if drop {
-	// 		sql, err := table.GetDropSQL()
-	// 		if err != nil {
-	// 			log.Println("Failed to generate drop sql.", err)
-	// 			continue
-	// 		}
-	// 		log.Println("Execute sql:\n" + sql)
-	// 		_, err = db.Exec(sql)
-	// 		if err != nil {
-	// 			log.Println("Drop table failed.", err)
-	// 			log.Println("We will try to create table.")
-	// 		}
-	// 	}
-	// 	sql, err := table.GetCreateSQL()
-	// 	if err != nil {
-	// 		log.Println("Generate create sql failed.", err)
-	// 		continue
-	// 	}
-	// 	log.Println("Execute sql:\n" + sql)
-	// 	_, err = db.Exec(sql)
-	// 	if err != nil {
-	// 		log.Println("Execute sql "+sql+" Failed", err)
-	// 		return
-	// 	}
-	// }
+	for _, table := range dbSchema.Tables {
+		if drop {
+			sql, err := table.GetDropSQL()
+			if err != nil {
+				log.Println("Failed to generate drop sql.", err)
+				continue
+			}
+			log.Println("Execute sql:\n" + sql)
+			_, err = db.Exec(sql)
+			if err != nil {
+				log.Println("Drop table failed.", err)
+				log.Println("We will try to create table.")
+			}
+		}
+		sql, err := table.GetCreateSQL()
+		if err != nil {
+			log.Println("Generate create sql failed.", err)
+			continue
+		}
+		log.Println("Execute sql:\n" + sql)
+		_, err = db.Exec(sql)
+		if err != nil {
+			log.Println("Execute sql "+sql+" Failed", err)
+			return
+		}
+	}
 }
