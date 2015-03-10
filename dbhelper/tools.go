@@ -64,12 +64,19 @@ func ShowDevSql(dbSchema models.DBSchema) {
 			fmt.Printf("Select SQL:\n\x1b[31;1m%s\x1b[0m\n", sql)
 		}
 
+		sql, err = table.GetInsertSQL()
+		if err != nil {
+			log.Println("Failed to get insert sql.", err)
+		} else {
+			fmt.Printf("Insert SQL:\n\x1b[31;1m%s\x1b[0m\n", sql)
+		}
 		sql, err = table.GetUpdateSQL()
 		if err != nil {
 			log.Println("Failed to get update sql.", err)
 		} else {
 			fmt.Printf("Update SQL:\n\x1b[31;1m%s\x1b[0m\n", sql)
 		}
+
 	}
 }
 
