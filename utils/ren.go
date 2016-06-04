@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/swanwish/go-helper/logs"
-	"github.com/swanwish/go-helper/utils"
+	"github.com/swanwish/go-common/logs"
+	"github.com/swanwish/go-common/utils"
 )
 
 func main() {
